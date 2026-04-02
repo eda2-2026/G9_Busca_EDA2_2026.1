@@ -9,6 +9,7 @@
 // criar uma nova função hash? vai que uma fica lotada e as outras vazias? talvez seja interessante ter mais de uma função hash para distribuir melhor os clientes entre as mesas
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 struct Cadeira_ocupada {
@@ -18,6 +19,14 @@ struct Cadeira_ocupada {
 
 const int NUM_MESAS = 5;
 Cadeira_ocupada* mesas[NUM_MESAS];
+
+struct InfoCliente{
+    string nome_cliente;
+    string pedido;
+    string cpf;
+};
+
+vector<InfoCliente> lista_geral_clientes;
 
 int funcaoHash(string nome) {
     int soma = 0;
