@@ -30,6 +30,18 @@ int funcaoHash(string nome) {
 void sentarCliente(string nome) {
     int mesa = funcaoHash(nome);
 
+    int ocupadas = 0;
+    Cadeira_ocupada* atual = mesas[mesa];
+    while (atual != nullptr){
+        ocupadas++;
+        atual = atual -> prox;
+    }
+
+    if (ocupadas >= 4){
+        cout << "Mesa " << mesa << " esta cheia. " << nome << " nao pode sentar nessa mesa." << endl;
+        return;
+    }
+    
     Cadeira_ocupada* novo = new Cadeira_ocupada;
     novo->nome_cliente = nome;
     novo->prox = mesas[mesa];
@@ -65,6 +77,20 @@ int main() {
     sentarCliente("Lucas");
     sentarCliente("Carlos");
     sentarCliente("Marina");
+    sentarCliente("Anne");
+    sentarCliente("Ann");
+    sentarCliente("An");
+    sentarCliente("A");
+    sentarCliente("e");
+    sentarCliente("ne");
+    sentarCliente("nne");
+    sentarCliente("Marin");
+    sentarCliente("Mari");
+    sentarCliente("rina");
+    sentarCliente("arina");
+    sentarCliente("Mar");
+    
+
 
     cout << endl;
     mostrarMesas();
