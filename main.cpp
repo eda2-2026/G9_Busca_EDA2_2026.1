@@ -75,6 +75,19 @@ void mostrarMesas() {
     }
 }
 
+void BuscaDadosSequencial(string nome) {
+    for (const auto& cliente : lista_geral_clientes) {
+        if (cliente.nome_cliente == nome) {
+            cout << "Informacoes do cliente: " << endl;
+            cout << "Nome: " << cliente.nome_cliente << endl;
+            cout << "Pedido: " << cliente.pedido << endl;
+            cout << "CPF: " << cliente.cpf << endl;
+            return;
+        }
+    }
+    cout << "Cliente nao encontrado." << endl;
+}
+
 int main() {
 
     for(int i = 0; i < NUM_MESAS; i++) {
@@ -82,27 +95,36 @@ int main() {
     }
     // exemplos só pra ver rodando
 
-    sentarCliente("Ana");
-    sentarCliente("Lucas");
-    sentarCliente("Carlos");
-    sentarCliente("Marina");
-    sentarCliente("Anne");
-    sentarCliente("Ann");
-    sentarCliente("An");
-    sentarCliente("A");
-    sentarCliente("e");
-    sentarCliente("ne");
-    sentarCliente("nne");
-    sentarCliente("Marin");
-    sentarCliente("Mari");
-    sentarCliente("rina");
-    sentarCliente("arina");
-    sentarCliente("Mar");
-    
+    string nome, cpf;
 
+    cout << "------RECEPCAO DO RESTAURANTE------" << endl;
 
-    cout << endl;
+    //entrada de dados
+    for(int i = 0; i < 3; i++) {
+        cout << "Digite o nome do cliente: ";
+        cin >> nome;
+        cout << "Digite o CPF do cliente: ";
+        cin >> cpf;
+
+        // Cadastra na lista 
+        InfoCliente novo;
+        novo.nome_cliente = nome;
+        novo.cpf = cpf;
+        novo.pedido = "Aguardando atendimento"; 
+        lista_geral_clientes.push_back(novo);
+
+        // Tenta sentar o cliente
+        sentarCliente(nome);
+    }
+
+    cout << "-----MAPA ATUAL-----" << endl;
     mostrarMesas();
+
+
+    //testando a busca sequencial
+    cout << "-----BUSCA SEQUENCIAL-----" << endl;
+    cin >> nome;
+    BuscaDadosSequencial(nome);
 
     return 0;
 }
