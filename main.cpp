@@ -102,6 +102,48 @@ void AtenderClienteExistente(string busca) {
     cout << "Cliente nao encontrado na lista de espera." << endl;
 }
 
+void receberPagamentoESair(string busca) {
+    int mesa_destino = -1;
+    string nome_confirmado = "";
+
+    for (auto it = lista_geral_clientes.begin(); it != lista_geral_clientes.end(); ) {
+        if (it->nome_cliente == busca || it->cpf == busca) {
+            nome_confirmado = it->nome_cliente;
+            // aqui ele faz a função hash de novo para saber onde o cliente está.
+            mesa_destino = funcaoHash(nome_confirmado);
+            
+            cout << "\n>>> Pagamento de " << nome_confirmado << " realizado com sucesso!" << endl;
+            
+            it = lista_geral_clientes.erase(it); // Remove da lista geral também
+            break; 
+        } else {
+            ++it; // Continua procurando
+        }
+    }
+
+    if (mesa_destino == -1) {
+        cout << "Cliente nao encontrado no registro geral." << endl;
+        return;
+    }
+    Cadeira_ocupada* atual = mesas[mesa_destino];
+    Cadeira_ocupada* anterior = nullptr; // so para mudar o ponteiro depois de encontrar o cliente
+    while (atual != nullptr) { // aqui vai fazer a busca na lista encadeada da mesa
+        if (atual->nome_cliente == nome_confirmado) {
+            if (anterior == nullptr) {
+                mesas[mesa_destino] = atual->prox;
+            } 
+            else {
+                anterior->prox = atual->prox;
+            }
+            delete atual; 
+            cout << "Cadeira liberada na Mesa " << mesa_destino << "." << endl;
+            return;
+        }
+        anterior = atual;
+        atual = atual->prox;
+    }
+}
+
 int main() {
 
     for(int i = 0; i < NUM_MESAS; i++) {
@@ -118,7 +160,7 @@ int main() {
         // 1. Cadastro do Cliente
         cout << "\n--- Novo Cliente Chegando ---" << endl;
         cout << "Nome: ";
-        getline(cin, nome);
+        getline(cin >> ws, nome);
         if(nome == "sair") break;
         
         cout << "CPF: ";
@@ -133,48 +175,39 @@ int main() {
         bool decidindo = true;
         while(decidindo) {
             cout << "\nO que deseja fazer agora?" << endl;
-            cout << "1 - Atender " << nome << " (Anotar Pedido)" << endl;
-            cout << "2 - Cadastrar proximo cliente" << endl;
-            cout << "3 - Buscar cliente por CPF" << endl;
-            cout << "4 - Ver mapa de mesas" << endl;
-            cout << "5 - Atender cliente existente" << endl;
+            cout << "1 - Cadastrar proximo cliente" << endl;
+            cout << "2 - Buscar cliente por CPF" << endl;
+            cout << "3 - Ver mapa de mesas" << endl;
+            cout << "4 - Atender cliente existente" << endl;
+            cout << "5 - Receber pagamento" << endl;
             cout << "6 - Sair do programa" << endl;
             
             cout << "Escolha: ";
             cin >> opcao;
 
             if(opcao== 1) {
-                //  Lógica de cardápio
-                InfoCliente &cliente_atual = lista_geral_clientes.back(); 
-                
-                int prato;
-                cout << "\n1-Pizza, 2-Burger, 3-Sushi. Escolha: ";
-                cin >> prato;
-                
-                if(prato == 1) cliente_atual.pedido = "Pizza";
-                else if(prato == 2) cliente_atual.pedido = "Burger";
-                else if(prato == 3) cliente_atual.pedido = "Sushi";
-                
-                cout << "Pedido anotado para " << nome << "!" << endl;
                 decidindo = false; 
             }
             else if(opcao == 2) {
-                decidindo = false; 
-            }
-            else if(opcao == 3) {
                 string busca;
                 cout << "Digite o CPF: ";
                 cin >> busca;
                 BuscaDadosSequencial(busca);
             }
-            else if(opcao == 4) {
+            else if(opcao == 3) {
                 mostrarMesas();
             }
-            else if(opcao == 5) {
+            else if(opcao == 4) {
                 string busca;
                 cout << "Digite o nome ou CPF do cliente: ";
-                cin >> busca;
+                getline(cin >> ws, busca);
                 AtenderClienteExistente(busca);
+            }
+            else if(opcao == 5) {
+                cout << "Digite o nome ou CPF para pagamento: ";
+                string busca;
+                getline(cin >> ws, busca);
+                receberPagamentoESair(busca);
             }
             else if(opcao == 6) {
                 decidindo = false;
