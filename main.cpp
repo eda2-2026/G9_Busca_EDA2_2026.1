@@ -75,17 +75,40 @@ void mostrarMesas() {
     }
 }
 
-void BuscaDadosSequencial(string nome) {
+void BuscaDadosSequencial(string cpf_digitado) {
     for (const auto& cliente : lista_geral_clientes) {
-        if (cliente.nome_cliente == nome) {
+        if (cliente.cpf == cpf_digitado) {
+            int m = funcaoHash(cliente.nome_cliente);
             cout << "Informacoes do cliente: " << endl;
             cout << "Nome: " << cliente.nome_cliente << endl;
             cout << "Pedido: " << cliente.pedido << endl;
             cout << "CPF: " << cliente.cpf << endl;
+            cout << "Localizacao: Mesa " << m << endl;
+            cout << "============================================" << endl;
             return;
         }
     }
     cout << "Cliente nao encontrado." << endl;
+}
+
+void AtenderClienteExistente(string busca) {
+    for (auto& cliente : lista_geral_clientes) {
+        // Busca por nome ou CPF para facilitar
+        if (cliente.nome_cliente == busca || cliente.cpf == busca) {
+            cout << "\nAtendendo: " << cliente.nome_cliente << endl;
+            cout << "1-Pizza, 2-Burger, 3-Sushi. Escolha: ";
+            int prato;
+            cin >> prato;
+
+            if(prato == 1) cliente.pedido = "Pizza";
+            else if(prato == 2) cliente.pedido = "Burger";
+            else if(prato == 3) cliente.pedido = "Sushi";
+
+            cout << "Pedido atualizado para " << cliente.nome_cliente << "!" << endl;
+            return;
+        }
+    }
+    cout << "Cliente nao encontrado na lista de espera." << endl;
 }
 
 int main() {
@@ -96,35 +119,83 @@ int main() {
     // exemplos só pra ver rodando
 
     string nome, cpf;
+    int opcao;
+    bool rodando = true;
 
     cout << "------RECEPCAO DO RESTAURANTE------" << endl;
 
-    //entrada de dados
-    for(int i = 0; i < 3; i++) {
-        cout << "Digite o nome do cliente: ";
+    while(rodando) {
+        // 1. Cadastro do Cliente
+        cout << "\n--- Novo Cliente Chegando ---" << endl;
+        cout << "Nome: ";
         cin >> nome;
-        cout << "Digite o CPF do cliente: ";
+        if(nome == "sair") break;
+        
+        cout << "CPF: ";
         cin >> cpf;
 
-        // Cadastra na lista 
-        InfoCliente novo;
-        novo.nome_cliente = nome;
-        novo.cpf = cpf;
-        novo.pedido = "Aguardando atendimento"; 
+        // Salva na Lista Sequencial e na Tabela Hash
+        InfoCliente novo = {nome, "Aguardando...", cpf};
         lista_geral_clientes.push_back(novo);
-
-        // Tenta sentar o cliente
         sentarCliente(nome);
+
+        // 2. Menu de Decisao Imediata
+        bool decidindo = true;
+        while(decidindo) {
+            cout << "\nO que deseja fazer agora?" << endl;
+            cout << "1 - Atender " << nome << " (Anotar Pedido)" << endl;
+            cout << "2 - Cadastrar proximo cliente" << endl;
+            cout << "3 - Buscar cliente por CPF" << endl;
+            cout << "4 - Ver mapa de mesas" << endl;
+            cout << "5 - Atender cliente existente" << endl;
+            cout << "6 - Sair do programa" << endl;
+            
+            cout << "Escolha: ";
+            cin >> opcao;
+
+            if(opcao== 1) {
+                //  Lógica de cardápio
+                InfoCliente &cliente_atual = lista_geral_clientes.back(); 
+                
+                int prato;
+                cout << "\n1-Pizza, 2-Burger, 3-Sushi. Escolha: ";
+                cin >> prato;
+                
+                if(prato == 1) cliente_atual.pedido = "Pizza";
+                else if(prato == 2) cliente_atual.pedido = "Burger";
+                else if(prato == 3) cliente_atual.pedido = "Sushi";
+                
+                cout << "Pedido anotado para " << nome << "!" << endl;
+                decidindo = false; 
+            }
+            else if(opcao == 2) {
+                decidindo = false; 
+            }
+            else if(opcao == 3) {
+                string busca;
+                cout << "Digite o CPF: ";
+                cin >> busca;
+                BuscaDadosSequencial(busca);
+            }
+            else if(opcao == 4) {
+                mostrarMesas();
+            }
+            else if(opcao == 5) {
+                string busca;
+                cout << "Digite o nome ou CPF do cliente: ";
+                cin >> busca;
+                AtenderClienteExistente(busca);
+            }
+            else if(opcao == 6) {
+                decidindo = false;
+                rodando = false;
+            }
+            
+            else {
+                cout << "Opcao invalida. Tente novamente." << endl;
+            }
+        }
     }
-
-    cout << "-----MAPA ATUAL-----" << endl;
-    mostrarMesas();
-
-
-    //testando a busca sequencial
-    cout << "-----BUSCA SEQUENCIAL-----" << endl;
-    cin >> nome;
-    BuscaDadosSequencial(nome);
 
     return 0;
 }
