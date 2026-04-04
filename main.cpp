@@ -19,6 +19,40 @@ struct InfoCliente{
 
 vector<InfoCliente> lista_geral_clientes;
 
+const string CLR_RESET = "\033[0m";
+const string FG_BLACK = "\033[30m";
+const string FG_WHITE = "\033[97m";
+const string BG_BLUE = "\033[44m";
+const string BG_GREEN = "\033[42m";
+const string BG_RED = "\033[41m";
+const string MENU_MARGIN = "    ";
+
+void printInfo(const string& mensagem) {
+    cout << BG_BLUE << FG_WHITE << " " << mensagem << " " << CLR_RESET << endl;
+}
+
+void printSuccess(const string& mensagem) {
+    cout << BG_GREEN << FG_BLACK << " " << mensagem << " " << CLR_RESET << endl;
+}
+
+void printError(const string& mensagem) {
+    cout << BG_RED << FG_WHITE << " " << mensagem << " " << CLR_RESET << endl;
+}
+
+void mostrarMenuComMargem() {
+    cout << "\n";
+    cout << MENU_MARGIN << "+----------------------------------+" << endl;
+    cout << MENU_MARGIN << "| O que deseja fazer agora?        |" << endl;
+    cout << MENU_MARGIN << "+----------------------------------+" << endl;
+    cout << MENU_MARGIN << "| 1 - Cadastrar proximo cliente    |" << endl;
+    cout << MENU_MARGIN << "| 2 - Buscar cliente por CPF       |" << endl;
+    cout << MENU_MARGIN << "| 3 - Ver mapa de mesas            |" << endl;
+    cout << MENU_MARGIN << "| 4 - Atender cliente existente    |" << endl;
+    cout << MENU_MARGIN << "| 5 - Receber pagamento            |" << endl;
+    cout << MENU_MARGIN << "| 6 - Sair do programa             |" << endl;
+    cout << MENU_MARGIN << "+----------------------------------+" << endl;
+}
+
 int funcaoHash(string nome) {
     int soma = 0;
     for(char c : nome) {
@@ -38,7 +72,7 @@ void sentarCliente(string nome) {
     }
 
     if (ocupadas >= 4){
-        cout << "Mesa " << mesa << " esta cheia. " << nome << " nao pode sentar nessa mesa." << endl;
+        printError("Mesa " + to_string(mesa) + " esta cheia. " + nome + " nao pode sentar nessa mesa.");
         return;
     }
     
@@ -48,7 +82,7 @@ void sentarCliente(string nome) {
 
     mesas[mesa] = novo;
 
-    cout << nome << " sentou na mesa " << mesa << endl;
+    printSuccess(nome + " sentou na mesa " + to_string(mesa));
 }
 
 void mostrarMesas() {
@@ -79,7 +113,7 @@ void BuscaDadosSequencial(string cpf_digitado) {
             return;
         }
     }
-    cout << "Cliente nao encontrado." << endl;
+    printError("Cliente nao encontrado.");
 }
 
 void AtenderClienteExistente(string busca) {
@@ -95,11 +129,11 @@ void AtenderClienteExistente(string busca) {
             else if(prato == 2) cliente.pedido = "Burger";
             else if(prato == 3) cliente.pedido = "Sushi";
 
-            cout << "Pedido atualizado para " << cliente.nome_cliente << "!" << endl;
+            printSuccess("Pedido atualizado para " + cliente.nome_cliente + "!");
             return;
         }
     }
-    cout << "Cliente nao encontrado na lista de espera." << endl;
+    printError("Cliente nao encontrado na lista de espera.");
 }
 
 void receberPagamentoESair(string busca) {
@@ -109,8 +143,7 @@ void receberPagamentoESair(string busca) {
     for (auto it = lista_geral_clientes.begin(); it != lista_geral_clientes.end(); ) {
         if (it->nome_cliente == busca || it->cpf == busca) {
             if (it->pedido == "Aguardando..." || it->pedido.empty()) {
-                cout << "Nao e possivel receber pagamento de " << it->nome_cliente
-                     << " porque o pedido ainda nao foi realizado." << endl;
+                printError("Nao e possivel receber pagamento de " + it->nome_cliente + " porque o pedido ainda nao foi realizado.");
                 return;
             }
             
@@ -118,7 +151,7 @@ void receberPagamentoESair(string busca) {
             // aqui ele faz a função hash de novo para saber onde o cliente está.
             mesa_destino = funcaoHash(nome_confirmado);
             
-            cout << "\n>>> Pagamento de " << nome_confirmado << " realizado com sucesso!" << endl;
+            printSuccess("Pagamento de " + nome_confirmado + " realizado com sucesso!");
             
             it = lista_geral_clientes.erase(it); // Remove da lista geral também
             break; 
@@ -128,7 +161,7 @@ void receberPagamentoESair(string busca) {
     }
 
     if (mesa_destino == -1) {
-        cout << "Cliente nao encontrado no registro geral." << endl;
+        printError("Cliente nao encontrado no registro geral.");
         return;
     }
     Cadeira_ocupada* atual = mesas[mesa_destino];
@@ -142,7 +175,7 @@ void receberPagamentoESair(string busca) {
                 anterior->prox = atual->prox;
             }
             delete atual; 
-            cout << "Cadeira liberada na Mesa " << mesa_destino << "." << endl;
+            printInfo("Cadeira liberada na Mesa " + to_string(mesa_destino) + ".");
             return;
         }
         anterior = atual;
@@ -160,7 +193,7 @@ int main() {
     int opcao;
     bool rodando = true;
 
-    cout << "------RECEPCAO DO RESTAURANTE------" << endl;
+    printInfo("------RECEPCAO DO RESTAURANTE------");
 
     while(rodando) {
         // 1. Cadastro do Cliente
@@ -180,15 +213,9 @@ int main() {
         // 2. Menu de Decisao Imediata
         bool decidindo = true;
         while(decidindo) {
-            cout << "\nO que deseja fazer agora?" << endl;
-            cout << "1 - Cadastrar proximo cliente" << endl;
-            cout << "2 - Buscar cliente por CPF" << endl;
-            cout << "3 - Ver mapa de mesas" << endl;
-            cout << "4 - Atender cliente existente" << endl;
-            cout << "5 - Receber pagamento" << endl;
-            cout << "6 - Sair do programa" << endl;
+            mostrarMenuComMargem();
             
-            cout << "Escolha: ";
+            cout << MENU_MARGIN << "Escolha: ";
             cin >> opcao;
 
             if(opcao== 1) {
@@ -221,7 +248,7 @@ int main() {
             }
             
             else {
-                cout << "Opcao invalida. Tente novamente." << endl;
+                printError("Opcao invalida. Tente novamente.");
             }
         }
     }
