@@ -108,6 +108,12 @@ void receberPagamentoESair(string busca) {
 
     for (auto it = lista_geral_clientes.begin(); it != lista_geral_clientes.end(); ) {
         if (it->nome_cliente == busca || it->cpf == busca) {
+            if (it->pedido == "Aguardando..." || it->pedido.empty()) {
+                cout << "Nao e possivel receber pagamento de " << it->nome_cliente
+                     << " porque o pedido ainda nao foi realizado." << endl;
+                return;
+            }
+            
             nome_confirmado = it->nome_cliente;
             // aqui ele faz a função hash de novo para saber onde o cliente está.
             mesa_destino = funcaoHash(nome_confirmado);
