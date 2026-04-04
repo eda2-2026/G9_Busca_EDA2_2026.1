@@ -1,13 +1,4 @@
-// a ideia inicial é criar a lógica para um hash em que cada bucket é uma lista encadeada com o limite de 4 elementos. 
-// o hash deve suportar as operações de inserção, busca e remoção de elementos. 
-// no cenário proposto, cada bucket vai funcionar como uma mesa de restaurante, onde cada cliente (elemento) é atendido em ordem de chegada (inserção).
-// a função de hash vai determinar em qual mesa o cliente deve sentar, e a lista encadeada vai garantir que os clientes sejam atendidos na ordem correta.
-// ideias a implementar: 
-// atender cliente - buscar sequencialmente em outra tabela todas as informações do cliente, como o pedido, método de pagamento, etc. 
-// verificar se o pedido do cliente existe no cardápio (pode ser uma outra estrutura)
-// remover cliente - quando o cliente terminar de comer, ele deve ser removido da mesa (lista encadeada) e as informações do cliente devem ser arquivadas em outra estrutura para fins de histórico e análise de dados.
-// criar uma nova função hash? vai que uma fica lotada e as outras vazias? talvez seja interessante ter mais de uma função hash para distribuir melhor os clientes entre as mesas
-
+#include <string>
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -116,7 +107,6 @@ int main() {
     for(int i = 0; i < NUM_MESAS; i++) {
         mesas[i] = nullptr;
     }
-    // exemplos só pra ver rodando
 
     string nome, cpf;
     int opcao;
@@ -128,7 +118,7 @@ int main() {
         // 1. Cadastro do Cliente
         cout << "\n--- Novo Cliente Chegando ---" << endl;
         cout << "Nome: ";
-        cin >> nome;
+        getline(cin, nome);
         if(nome == "sair") break;
         
         cout << "CPF: ";
