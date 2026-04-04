@@ -8,7 +8,7 @@ struct Cadeira_ocupada {
     Cadeira_ocupada* prox;
 };
 
-const int NUM_MESAS = 5;
+const int NUM_MESAS = 7;
 Cadeira_ocupada* mesas[NUM_MESAS];
 
 struct InfoCliente{
