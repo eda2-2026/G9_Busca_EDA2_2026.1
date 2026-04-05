@@ -17,6 +17,10 @@ O sistema permite cadastrar clientes, registrar pedidos, buscar por CPF, visuali
 
 ![Lógica](./images/logica.png)
 
+## Vídeo de Apresentação
+[Vídeo da Apresentação](https://www.youtube.com/watch?v=Ug12fJK3p64)
+
+
 ## Funcionalidades
 - Cadastrar cliente com nome e CPF
 - Alocar cliente em mesa com funcao hash
